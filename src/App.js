@@ -1,20 +1,34 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Navbar from "./component/layout/Navbar";
+import Dashboard from "./component/layout/Dashboard";
+
+import AddTest from "./component/tests/AddTest";
+import TestResult from "./component/tests/TestDetail";
+
+import { Provider } from "react-redux";
+import store from "./store";
+
 import "./App.css";
 
 class App extends Component {
   render() {
     return (
-      <Router>
-        <div className="App">
-          <Navbar />
-          <div className="container">
-            <h1>asd</h1>
+      <Provider store={store}>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <div className="container">
+              <Switch>
+                <Route exact path="/" component={Dashboard} />
+                <Route exact path="/test/add" component={AddTest} />
+                <Route exact path="/test/:id" component={TestResult} />
+              </Switch>
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </Provider>
     );
   }
 }
