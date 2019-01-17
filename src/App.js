@@ -5,6 +5,7 @@ import Navbar from "./component/layout/Navbar";
 import Dashboard from "./component/layout/Dashboard";
 
 import AddTest from "./component/tests/AddTest";
+import EditTest from "./component/tests/EditTest";
 import TestResult from "./component/tests/TestDetail";
 
 import { Provider } from "react-redux";
@@ -24,6 +25,7 @@ class App extends Component {
                 <Route exact path="/" component={Dashboard} />
                 <Route exact path="/test/add" component={AddTest} />
                 <Route exact path="/test/:id" component={TestResult} />
+                <Route exact path="/test/edit/:id" component={EditTest} />
               </Switch>
             </div>
           </div>

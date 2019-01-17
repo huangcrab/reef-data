@@ -1,55 +1,60 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import moment from "moment";
+import { withRouter } from "react-router-dom";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
+import Spinner from "../../component/layout/Spinner";
+import { Link } from "react-router-dom";
 
-class AddTest extends Component {
-  state = {
-    calcium: "",
-    alkalinity: "",
-    ph: "",
-    nitrate: "",
-    phosphate: "",
-    date: moment().format("L"),
-    time: moment().format("LT"),
-    event: ""
-  };
+class EditTest extends Component {
+  constructor(props) {
+    super(props);
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+    this.alkalinity = React.createRef();
+    this.calcium = React.createRef();
+    this.phosphate = React.createRef();
+    this.ph = React.createRef();
+    this.nitrate = React.createRef();
+    this.event = React.createRef();
+    this.date = React.createRef();
+    this.time = React.createRef();
+  }
 
   onSubmit = e => {
     e.preventDefault();
-    const newTest = new Object();
 
-    Object.keys(this.state).forEach(key => {
-      if (this.state[key] !== "") {
-        newTest[key] = this.state[key];
-      }
-    });
-    newTest.date = moment(newTest.date).format("L");
-    const { firestore, history } = this.props;
+    const newTest = {
+      calcium: this.calcium.current.value,
+      alkalinity: this.alkalinity.current.value,
+      phosphate: this.phosphate.current.value,
+      ph: this.ph.current.value,
+      nitrate: this.nitrate.current.value,
+      event: this.event.current.value,
+      date: this.date.current.value,
+      time: this.time.current.value
+    };
+    const { test, firestore, history } = this.props;
 
     firestore
-      .add({ collection: "parameters" }, newTest)
-      .then(() => history.push("/"));
+      .update({ collection: "parameters", doc: test.id }, newTest)
+      .then(() => history.push(`/test/${test.id}`));
   };
 
   render() {
-    return (
+    const { test } = this.props;
+    return test ? (
       <div>
         <div className="row">
           <div className="col-md-6">
-            <Link to="/" className="btn btn-link">
-              <i className="fas fa-arrow-circle-left" /> Back To Dashboard
+            <Link to={`/test/${test.id}`} className="btn btn-link">
+              <i className="fas fa-arrow-circle-left" /> Back To Details
             </Link>
           </div>
         </div>
 
         <div className="card">
-          <div className="card-header">Add Test Result</div>
+          <div className="card-header">Edit Test Result</div>
           <div className="card-body">
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
@@ -58,8 +63,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="calcium"
-                  onChange={this.onChange}
-                  value={this.state.calcium}
+                  ref={this.calcium}
+                  defaultValue={test.calcium}
                 />
               </div>
               <div className="form-group">
@@ -68,8 +73,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="alkalinity"
-                  onChange={this.onChange}
-                  value={this.state.alkalinity}
+                  ref={this.alkalinity}
+                  defaultValue={test.alkalinity}
                 />
               </div>
               <div className="form-group">
@@ -78,8 +83,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="ph"
-                  onChange={this.onChange}
-                  value={this.state.ph}
+                  ref={this.ph}
+                  defaultValue={test.ph}
                 />
               </div>
               <div className="form-group">
@@ -88,8 +93,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="nitrate"
-                  onChange={this.onChange}
-                  value={this.state.nitrate}
+                  ref={this.nitrate}
+                  defaultValue={test.nitrate}
                 />
               </div>
               <div className="form-group">
@@ -98,8 +103,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="phosphate"
-                  onChange={this.onChange}
-                  value={this.state.phosphate}
+                  ref={this.phosphate}
+                  defaultValue={test.phosphate}
                 />
               </div>
               <div className="form-group">
@@ -108,18 +113,19 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="event"
-                  onChange={this.onChange}
-                  value={this.state.event}
+                  ref={this.event}
+                  defaultValue={test.event}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="date">Date</label>
                 <input
+                  data-date=""
                   type="text"
                   className="form-control"
                   name="date"
-                  onChange={this.onChange}
-                  value={this.state.date}
+                  ref={this.date}
+                  defaultValue={test.date}
                   required
                 />
               </div>
@@ -129,8 +135,8 @@ class AddTest extends Component {
                   type="text"
                   className="form-control"
                   name="time"
-                  onChange={this.onChange}
-                  value={this.state.time}
+                  ref={this.time}
+                  defaultValue={test.time}
                 />
               </div>
               <input
@@ -142,11 +148,25 @@ class AddTest extends Component {
           </div>
         </div>
       </div>
+    ) : (
+      <Spinner />
     );
   }
 }
-AddTest.proptypes = {
+EditTest.propTypes = {
+  test: PropTypes.object,
   firestore: PropTypes.object.isRequired
 };
 
-export default firestoreConnect()(AddTest);
+export default compose(
+  firestoreConnect(props => [
+    {
+      collection: "parameters",
+      storeAs: "test",
+      doc: props.match.params.id
+    }
+  ]),
+  connect(state => ({
+    test: state.firestore.ordered.test && state.firestore.ordered.test[0]
+  }))
+)(withRouter(EditTest));

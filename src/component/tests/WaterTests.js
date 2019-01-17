@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import Spinner from "../../component/layout/Spinner";
+import moment from "moment";
 
 import {
   ResponsiveContainer,
@@ -19,36 +20,45 @@ import {
 
 class WaterTests extends Component {
   state = {
+    calcium: [],
     avgCa: ""
   };
   onDotClick = e => {
-    this.props.history.push(`/tests/${e.payload.id}`);
+    this.props.history.push(`/test/${e.payload.id}`);
   };
 
-  static getDerivedStateFromProps(props, state) {
+  tickFormatter = tick => moment(tick * 1000).format("L");
+  static getDerivedStateFromProps(props) {
     const { tests } = props;
-    if (tests) {
-      let totalCa = tests.reduce((totalCa, test) => {
-        return totalCa + parseFloat(test.Ca.toString());
-      }, 0);
 
-      return { avgCa: (totalCa / tests.length).toFixed(2) };
+    if (tests) {
+      tests.forEach(test => {
+        Object.keys(test).forEach(key => {
+          if (test[key] === "") {
+            delete test[key];
+          }
+        });
+      });
+      tests.sort(
+        (a, b) =>
+          new Date(a.date).getTime() / 1000 - new Date(b.date).getTime() / 1000
+      );
     }
+
     return null;
   }
-
   render() {
     const waterTests = this.props.tests;
     const { avgCa } = this.state;
     if (waterTests) {
       return (
         <div>
-          <div className="rowm mb-3">
+          <div className="row mb-3">
             <div className="col-md-6">
               <i className="fas fa-vial" /> Water Parameters
             </div>
             <div className="col-md-6">
-              <h5 className="text-left text-secondary">
+              <h5 className="text-right text-secondary">
                 {" "}
                 Total Tests:{" "}
                 <span className="text-primary">{waterTests.length}</span>
@@ -65,18 +75,18 @@ class WaterTests extends Component {
               <LineChart className="chart" data={waterTests} syncId="anyId">
                 <Line
                   type="monotone"
-                  dataKey="PH"
+                  dataKey="ph"
                   stroke="green"
                   activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
                 />
                 <Line
                   type="monotone"
-                  dataKey="Alk"
+                  dataKey="alkalinity"
                   stroke="#8884d8"
                   activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
                 />
                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="Time" />
+                <XAxis dataKey="date" interval={5} />
                 <YAxis />
                 <Tooltip />
                 <Legend />
@@ -86,13 +96,13 @@ class WaterTests extends Component {
               <LineChart className="chart" data={waterTests} syncId="anyId">
                 <Line
                   type="monotone"
-                  dataKey="Ca"
+                  dataKey="calcium"
                   stroke="#8884d8"
                   activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
                 />
 
                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="id" />
+                <XAxis dataKey="date" />
                 <YAxis domain={[350, 450]} />
                 <Tooltip />
                 <Legend />
@@ -102,13 +112,13 @@ class WaterTests extends Component {
               <LineChart className="chart" data={waterTests} syncId="anyId">
                 <Line
                   type="monotone"
-                  dataKey="Phosphate"
+                  dataKey="phosphate"
                   stroke="#8884d8"
                   activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
                 />
 
                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="id" />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
@@ -118,13 +128,13 @@ class WaterTests extends Component {
               <LineChart className="chart" data={waterTests} syncId="anyId">
                 <Line
                   type="monotone"
-                  dataKey="Nitrate"
+                  dataKey="nitrate"
                   stroke="#8884d8"
                   activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
                 />
 
                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="id" />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
