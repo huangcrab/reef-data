@@ -6,25 +6,31 @@ import { firestoreConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import Spinner from "../../component/layout/Spinner";
 import moment from "moment";
+import Sidebar from "../layout/Sidebar";
+import Chart from "../../component/utils/Chart";
 
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
-} from "recharts";
+import { Line } from "recharts";
 
 class WaterTests extends Component {
   state = {
     calcium: [],
-    avgCa: ""
+    avgCal: "",
+    showTooltip: false,
+    tooltip: {}
   };
   onDotClick = e => {
     this.props.history.push(`/test/${e.payload.id}`);
+  };
+
+  onDotOver = e => {
+    console.log(e.payload);
+    this.setState({ showTooltip: true });
+    this.setState({ tooltip: e.payload });
+  };
+
+  onDotOut = () => {
+    this.setState({ showTooltip: false });
+    this.setState({ tooltip: {} });
   };
 
   tickFormatter = tick => moment(tick * 1000).format("L");
@@ -43,103 +49,153 @@ class WaterTests extends Component {
         (a, b) =>
           new Date(a.date).getTime() / 1000 - new Date(b.date).getTime() / 1000
       );
+
+      const cals = tests
+        .filter(test => test.calcium)
+        .map(test => parseInt(test.calcium));
+
+      let sum = cals.reduce((acc, cal) => acc + cal, 0);
+
+      return { avgCal: (sum / cals.length).toFixed(2).toString() };
     }
 
     return null;
   }
   render() {
     const waterTests = this.props.tests;
-    const { avgCa } = this.state;
+    const { showTooltip, tooltip, avgCal } = this.state;
+    const activeDot = {
+      r: 8,
+      onClick: this.onDotClick,
+      onMouseOver: this.onDotOver,
+      onMouseOut: this.onDotOut
+    };
+
     if (waterTests) {
       return (
-        <div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <i className="fas fa-vial" /> Water Parameters
+        <div className="row">
+          <div className="col-md-10">
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <i className="fas fa-vial" /> Water Parameters
+              </div>
+              <div className="col-md-6">
+                <h5 className="text-right text-secondary">
+                  {" "}
+                  Total Tests:{" "}
+                  <span className="text-primary">{waterTests.length}</span>
+                </h5>
+                <h5 className="text-right text-secondary">
+                  {" "}
+                  Average Ca level:
+                  <span className="text-primary"> {avgCal}</span>
+                </h5>
+              </div>
             </div>
-            <div className="col-md-6">
-              <h5 className="text-right text-secondary">
-                {" "}
-                Total Tests:{" "}
-                <span className="text-primary">{waterTests.length}</span>
-              </h5>
-              <h5 className="text-right text-secondary">
-                {" "}
-                Average Ca level:
-                <span className="text-primary">{avgCa}</span>
-              </h5>
-            </div>
-          </div>
-          <div className="row">
-            <ResponsiveContainer width="100%" aspect={4.0 / 1}>
-              <LineChart className="chart" data={waterTests} syncId="anyId">
+            <div className="row">
+              <Chart data={waterTests} dataKey="date" domainY={[6, 12]}>
                 <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="PH"
+                  dot={false}
                   type="monotone"
+                  connectNulls={true}
                   dataKey="ph"
-                  stroke="green"
-                  activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
+                  stroke="#00e64d"
+                  activeDot={activeDot}
                 />
+
                 <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="Alkalinity"
+                  dot={false}
+                  connectNulls={true}
                   type="monotone"
                   dataKey="alkalinity"
-                  stroke="#8884d8"
-                  activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
+                  stroke="#0000e6"
+                  activeDot={activeDot}
                 />
-                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="date" interval={5} />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width="100%" aspect={4.0 / 1}>
-              <LineChart className="chart" data={waterTests} syncId="anyId">
+              </Chart>
+
+              <Chart data={waterTests} dataKey="date" domainY={[350, 450]}>
                 <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="Calcium"
+                  dot={false}
                   type="monotone"
                   dataKey="calcium"
-                  stroke="#8884d8"
-                  activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
+                  connectNulls={true}
+                  stroke="#e600e6"
+                  activeDot={activeDot}
                 />
-
-                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="date" />
-                <YAxis domain={[350, 450]} />
-                <Tooltip />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width="100%" aspect={4.0 / 1}>
-              <LineChart className="chart" data={waterTests} syncId="anyId">
+              </Chart>
+              <Chart data={waterTests} dataKey="date">
                 <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="Phosphate"
+                  dot={false}
+                  connectNulls={true}
                   type="monotone"
                   dataKey="phosphate"
-                  stroke="#8884d8"
-                  activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
+                  stroke="#e60000"
+                  activeDot={activeDot}
                 />
+              </Chart>
 
-                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width="100%" aspect={4.0 / 1}>
-              <LineChart className="chart" data={waterTests} syncId="anyId">
+              <Chart data={waterTests} dataKey="date">
                 <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="Nitrate"
+                  dot={false}
+                  connectNulls={true}
                   type="monotone"
                   dataKey="nitrate"
-                  stroke="#8884d8"
-                  activeDot={{ r: 6, onClick: this.onDotClick.bind(this) }}
+                  stroke="#ff5c33"
+                  activeDot={activeDot}
                 />
-
-                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
+              </Chart>
+            </div>
+          </div>
+          <div className="col-md-2">
+            <Sidebar />
+            <hr />
+            {showTooltip ? (
+              <div className="card">
+                <div className="card-header">Highlighted Test</div>
+                <div className="card-body m-auto">
+                  {tooltip.date ? (
+                    <div className="row">Test Date: {tooltip.date}</div>
+                  ) : null}
+                  <hr />
+                  {tooltip.calcium ? (
+                    <div className="row">Calcium: {tooltip.calcium}</div>
+                  ) : null}
+                  {tooltip.alkalinity ? (
+                    <div className="row">Alkalinity: {tooltip.alkalinity}</div>
+                  ) : null}
+                  {tooltip.phosphate ? (
+                    <div className="row">Phosphate: {tooltip.phosphate}</div>
+                  ) : null}
+                  {tooltip.nitrate ? (
+                    <div className="row">Nitrate: {tooltip.nitrate}</div>
+                  ) : null}
+                  {tooltip.ph ? (
+                    <div className="row">PH: {tooltip.ph}</div>
+                  ) : null}
+                  {tooltip.event ? (
+                    <div className="row">Event: {tooltip.event}</div>
+                  ) : null}
+                  {tooltip.time ? (
+                    <div className="row">Time: {tooltip.time}</div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       );

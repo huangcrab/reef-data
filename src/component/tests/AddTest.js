@@ -22,7 +22,7 @@ class AddTest extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    const newTest = new Object();
+    const newTest = {};
 
     Object.keys(this.state).forEach(key => {
       if (this.state[key] !== "") {
