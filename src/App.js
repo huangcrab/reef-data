@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
+import { UserIsAuthenticated, UserIsNotAuthenticated } from "./helpers/auth";
+
 import Navbar from "./component/layout/Navbar";
 import Dashboard from "./component/layout/Dashboard";
-
+import Login from "./component/auth/Login";
 import AddTest from "./component/tests/AddTest";
 import EditTest from "./component/tests/EditTest";
 import TestResult from "./component/tests/TestDetail";
@@ -22,10 +24,31 @@ class App extends Component {
             <Navbar />
             <div className="container">
               <Switch>
-                <Route exact path="/" component={Dashboard} />
-                <Route exact path="/test/add" component={AddTest} />
-                <Route exact path="/test/:id" component={TestResult} />
-                <Route exact path="/test/edit/:id" component={EditTest} />
+                <Route
+                  exact
+                  path="/"
+                  component={UserIsAuthenticated(Dashboard)}
+                />
+                <Route
+                  exact
+                  path="/test/add"
+                  component={UserIsAuthenticated(AddTest)}
+                />
+                <Route
+                  exact
+                  path="/test/:id"
+                  component={UserIsAuthenticated(TestResult)}
+                />
+                <Route
+                  exact
+                  path="/test/edit/:id"
+                  component={UserIsAuthenticated(EditTest)}
+                />
+                <Route
+                  exact
+                  path="/login"
+                  component={UserIsNotAuthenticated(Login)}
+                />
               </Switch>
             </div>
           </div>
