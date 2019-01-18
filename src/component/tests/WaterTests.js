@@ -23,7 +23,6 @@ class WaterTests extends Component {
   };
 
   onDotOver = e => {
-    console.log(e.payload);
     this.setState({ showTooltip: true });
     this.setState({ tooltip: e.payload });
   };

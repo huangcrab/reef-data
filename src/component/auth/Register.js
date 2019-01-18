@@ -5,12 +5,14 @@ import { connect } from "react-redux";
 import { firebaseConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 import { setNotification } from "../../actions/notifyActions";
-
+import { Redirect } from "react-router-dom";
 import Message from "../layout/Message";
-class Login extends Component {
+
+class Register extends Component {
   state = {
     email: "",
-    password: "",
+    password1: "",
+    password2: "",
     notify: {}
   };
 
@@ -28,18 +30,23 @@ class Login extends Component {
     e.preventDefault();
 
     const { firebase } = this.props;
-    const { email, password } = this.state;
-    firebase
-      .login({
-        email,
-        password
-      })
-      .catch(err => {
-        this.props.setNotification("danger", "Invalid Login Credentials!");
-      });
+    const { email, password1, password2 } = this.state;
+
+    if (password1 === password2) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password1)
+        .then(user => console.log(user))
+        .catch(err => this.props.setNotification("danger", err.message));
+    } else {
+      this.props.setNotification("danger", "password does not match");
+    }
   };
 
   render() {
+    if (!this.props.setting.allowRegistration) {
+      return <Redirect to={"/"} />;
+    }
     const { notify } = this.state;
     return (
       <div>
@@ -51,7 +58,7 @@ class Login extends Component {
               <div className="card-body">
                 <h1 className="text-center pb-4 pt-3">
                   <span className="text-dark">
-                    <i className="fas fa-lock" /> Login
+                    <i className="fas fa-lock" /> Register
                   </span>
                 </h1>
                 <form onSubmit={this.onSubmit}>
@@ -66,21 +73,33 @@ class Login extends Component {
                       onChange={this.onChange}
                     />
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password1">Password</label>
                     <input
                       type="password"
-                      name="password"
+                      name="password1"
                       className="form-control"
                       required
-                      value={this.state.password}
+                      value={this.state.password1}
+                      onChange={this.onChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="password2">Confirm Password</label>
+                    <input
+                      type="password"
+                      name="password2"
+                      className="form-control"
+                      required
+                      value={this.state.password2}
                       onChange={this.onChange}
                     />
                   </div>
 
                   <input
                     type="submit"
-                    value="Login"
+                    value="Register"
                     className="btn btn-block btn-dark"
                   />
                 </form>
@@ -93,14 +112,16 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Register.propTypes = {
   firebase: PropTypes.object.isRequired,
+  setting: PropTypes.object.isRequired,
   notify: PropTypes.object.isRequired,
   setNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  notify: state.notify
+  notify: state.notify,
+  setting: state.setting
 });
 
 export default compose(
@@ -109,4 +130,4 @@ export default compose(
     mapStateToProps,
     { setNotification }
   )
-)(Login);
+)(Register);
