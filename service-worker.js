@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/reef-data/precache-manifest.8c877c838fbadd8463bc21e0eb0a55bb.js"
+  "/reef-data/precache-manifest.88be66e7301cac2f4005d4bf0a37a43b.js"
 );
 
 workbox.clientsClaim();
