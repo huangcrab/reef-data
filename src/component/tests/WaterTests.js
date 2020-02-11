@@ -16,7 +16,8 @@ class WaterTests extends Component {
     calcium: [],
     avgCal: "",
     showTooltip: false,
-    tooltip: {}
+    tooltip: {},
+    tests: []
   };
   onDotClick = e => {
     this.props.history.push(`/test/${e.payload.id}`);
@@ -33,6 +34,7 @@ class WaterTests extends Component {
   };
 
   tickFormatter = tick => moment(tick * 1000).format("L");
+
   static getDerivedStateFromProps(props) {
     const { tests } = props;
 
@@ -45,8 +47,7 @@ class WaterTests extends Component {
         });
       });
       tests.sort(
-        (a, b) =>
-          new Date(a.date).getTime() / 1000 - new Date(b.date).getTime() / 1000
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
       );
 
       const cals = tests
@@ -158,6 +159,20 @@ class WaterTests extends Component {
                   activeDot={activeDot}
                 />
               </Chart>
+
+              <Chart data={waterTests} dataKey="date">
+                <Line
+                  strokeWidth={2}
+                  legendType="triangle"
+                  name="Magnesium"
+                  dot={false}
+                  connectNulls={true}
+                  type="monotone"
+                  dataKey="magnesium"
+                  stroke="#ff5c43"
+                  activeDot={activeDot}
+                />
+              </Chart>
             </div>
           </div>
           <div className="col-md-2">
@@ -176,6 +191,9 @@ class WaterTests extends Component {
                   ) : null}
                   {tooltip.alkalinity ? (
                     <div className="row">Alkalinity: {tooltip.alkalinity}</div>
+                  ) : null}
+                  {tooltip.magnesium ? (
+                    <div className="row">Magnesium: {tooltip.magnesium}</div>
                   ) : null}
                   {tooltip.phosphate ? (
                     <div className="row">Phosphate: {tooltip.phosphate}</div>

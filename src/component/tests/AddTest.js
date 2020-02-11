@@ -8,6 +8,7 @@ class AddTest extends Component {
   state = {
     calcium: "",
     alkalinity: "",
+    magnesium: "",
     ph: "",
     nitrate: "",
     phosphate: "",
@@ -70,6 +71,16 @@ class AddTest extends Component {
                   name="alkalinity"
                   onChange={this.onChange}
                   value={this.state.alkalinity}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="magnesium">Magnesium</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="magnesium"
+                  onChange={this.onChange}
+                  value={this.state.magnesium}
                 />
               </div>
               <div className="form-group">
