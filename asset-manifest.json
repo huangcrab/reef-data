@@ -1,13 +1,13 @@
 {
-  "main.css": "/static/css/main.ba2cc929.chunk.css",
-  "main.js": "/static/js/main.50485cfe.chunk.js",
-  "main.js.map": "/static/js/main.50485cfe.chunk.js.map",
-  "static/js/1.9d6c2662.chunk.js": "/static/js/1.9d6c2662.chunk.js",
-  "static/js/1.9d6c2662.chunk.js.map": "/static/js/1.9d6c2662.chunk.js.map",
-  "runtime~main.js": "/static/js/runtime~main.229c360f.js",
-  "runtime~main.js.map": "/static/js/runtime~main.229c360f.js.map",
-  "static/css/main.ba2cc929.chunk.css.map": "/static/css/main.ba2cc929.chunk.css.map",
-  "index.html": "/index.html",
-  "precache-manifest.54dc6b1637a3936f0abf315579bc6ae5.js": "/precache-manifest.54dc6b1637a3936f0abf315579bc6ae5.js",
-  "service-worker.js": "/service-worker.js"
+  "main.css": "/reef-data/static/css/main.ba2cc929.chunk.css",
+  "main.js": "/reef-data/static/js/main.3cbd3b52.chunk.js",
+  "main.js.map": "/reef-data/static/js/main.3cbd3b52.chunk.js.map",
+  "static/js/1.c4437a64.chunk.js": "/reef-data/static/js/1.c4437a64.chunk.js",
+  "static/js/1.c4437a64.chunk.js.map": "/reef-data/static/js/1.c4437a64.chunk.js.map",
+  "runtime~main.js": "/reef-data/static/js/runtime~main.b3567527.js",
+  "runtime~main.js.map": "/reef-data/static/js/runtime~main.b3567527.js.map",
+  "static/css/main.ba2cc929.chunk.css.map": "/reef-data/static/css/main.ba2cc929.chunk.css.map",
+  "index.html": "/reef-data/index.html",
+  "precache-manifest.86e6377b1e15a74e83107a0ff5d79c53.js": "/reef-data/precache-manifest.86e6377b1e15a74e83107a0ff5d79c53.js",
+  "service-worker.js": "/reef-data/service-worker.js"
 }
