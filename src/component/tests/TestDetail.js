@@ -111,6 +111,9 @@ class TestDetail extends Component {
                 {test.alkalinity ? (
                   <div className="row">Alkalinity: {test.alkalinity}</div>
                 ) : null}
+                {test.magnesium ? (
+                  <div className="row">Magnesium: {test.magnesium}</div>
+                ) : null}
                 {test.phosphate ? (
                   <div className="row">Phosphate: {test.phosphate}</div>
                 ) : null}

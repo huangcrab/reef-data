@@ -13,6 +13,7 @@ class EditTest extends Component {
 
     this.alkalinity = React.createRef();
     this.calcium = React.createRef();
+    this.magnesium = React.createRef();
     this.phosphate = React.createRef();
     this.ph = React.createRef();
     this.nitrate = React.createRef();
@@ -27,6 +28,7 @@ class EditTest extends Component {
     const newTest = {
       calcium: this.calcium.current.value,
       alkalinity: this.alkalinity.current.value,
+      magnesium: this.magnesium.current.value,
       phosphate: this.phosphate.current.value,
       ph: this.ph.current.value,
       nitrate: this.nitrate.current.value,
@@ -75,6 +77,16 @@ class EditTest extends Component {
                   name="alkalinity"
                   ref={this.alkalinity}
                   defaultValue={test.alkalinity}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="magnesium">Magnesium</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="magnesium"
+                  ref={this.magnesium}
+                  defaultValue={test.magnesium}
                 />
               </div>
               <div className="form-group">
